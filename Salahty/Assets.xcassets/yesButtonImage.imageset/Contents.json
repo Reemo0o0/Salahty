@@ -1,6 +1,7 @@
 {
   "images" : [
     {
+      "filename" : "yes.png",
       "idiom" : "universal",
       "scale" : "1x"
     },

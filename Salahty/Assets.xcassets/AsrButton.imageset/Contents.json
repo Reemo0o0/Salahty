@@ -1,6 +1,7 @@
 {
   "images" : [
     {
+      "filename" : "AsrButton.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
