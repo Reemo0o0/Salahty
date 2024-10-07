@@ -21,9 +21,6 @@ class GameScene: SKScene {
     var catNode: SKSpriteNode!
     var messageLabel: SKLabelNode!
     
-    
-    
-    
     var currentLevel = 1 // المستوى الحالي، يبدأ من صلاة الفجر
     var finalLevelCompleted = false // متغير لمعرفة ما إذا تم إنهاء جميع الصلوات
     var completedPrayers = Set<String>() // لتخزين الصلوات المكتملة
@@ -105,7 +102,7 @@ class GameScene: SKScene {
             // التعامل مع الضغط على زر "نعم"
             else if touchedNode == yesButton {
                 hidePopUp()
-                displayMessage("أحسنت! بارك الله فيك.", position: CGPoint(x: 42, y: -350.018))
+                displayMessage("أحسنت!", position: CGPoint(x: 42, y: -350.018))
 
                 // إضافة الصلاة المكتملة
                 completedPrayers.insert(currentPrayer)
@@ -124,7 +121,7 @@ class GameScene: SKScene {
             // التعامل مع الضغط على زر "لا"
             else if touchedNode == noButton {
                 hidePopUp()
-                displayMessage("اذهب للصلاة، نحن بانتظارك.", position: CGPoint(x: 42, y: -350.018))
+                displayMessage("اذهب للصلاة", position: CGPoint(x: 42, y: -350.018))
                 playSound(named: "BABY")
                 animateNoCat(W: 53.056, H: 63.466, X: -117.282, Y: -328.055)
 
@@ -145,7 +142,7 @@ class GameScene: SKScene {
             ishaButton.isHidden = false
         } else if currentPrayer == "isha" {
             finalLevelCompleted = true
-            displayMessage("كل الصلوات اكتملت! أحسنت العمل!", position: CGPoint(x: 0, y: 0))
+            displayMessage("انت مميز!!", position: CGPoint(x: 42, y: -350.018))
             playSound(named: "allPrayersCompletedSound")
         }
     }
@@ -189,9 +186,10 @@ class GameScene: SKScene {
         // عرض الرسالة المخصصة داخل نافذة البوب أب
         messageLabel?.removeFromParent()
         messageLabel = SKLabelNode(text: prayerMessage)
-        messageLabel.fontSize = 24
+        messageLabel.fontName = "bitsy-ar-standardline" // تعيين الخط المخصص
+        messageLabel.fontSize = 16
         messageLabel.fontColor = .white
-        messageLabel.position = CGPoint(x: -16, y: -10)
+        messageLabel.position = CGPoint(x: -4, y: -8)
         messageLabel.zPosition = 11
         popUpBackground.addChild(messageLabel)
     }
@@ -208,7 +206,8 @@ class GameScene: SKScene {
     func displayMessage(_ message: String, position: CGPoint) {
         messageLabel?.removeFromParent()
         messageLabel = SKLabelNode(text: message)
-        messageLabel.fontSize = 20
+        messageLabel.fontName = "bitsy-ar-standardline" // تعيين الخط المخصص
+        messageLabel.fontSize = 15
         messageLabel.fontColor = .white
         messageLabel.position = position
         messageLabel.zPosition = 20

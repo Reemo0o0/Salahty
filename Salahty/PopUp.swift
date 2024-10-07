@@ -31,11 +31,11 @@ struct PopUp : View {
                
 
               //  Text("Checkpoint \(checkpoint + 1): ؟ '\(goal)'. هل صليت")
-                Text(" هل صليت صلاه الفجر ؟")
-                    .font(.headline)
+                Text("هل صليت صلاة الفجر؟")
+                    .font(.custom("bitsy-ar-standardline", size: 18)) // تغيير الخط المخصص
                     .foregroundColor(.brown)
                     .bold()
-                    .position(x: 190, y: 380)
+                    .position(x: 200, y: 390)
                     .shadow(color: .white.opacity(0.9), radius: 3, x: 2, y: 2)
 
                
