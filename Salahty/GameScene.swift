@@ -21,6 +21,9 @@ class GameScene: SKScene {
     var catNode: SKSpriteNode!
     var messageLabel: SKLabelNode!
     
+    
+    
+    
     var currentLevel = 1 // المستوى الحالي، يبدأ من صلاة الفجر
     var finalLevelCompleted = false // متغير لمعرفة ما إذا تم إنهاء جميع الصلوات
     var completedPrayers = Set<String>() // لتخزين الصلوات المكتملة
@@ -158,7 +161,7 @@ class GameScene: SKScene {
         
         // إنشاء خلفية البوب أب بحجم وموقع محددين
         let popUpSize = CGSize(width: 303, height: 302)
-        popUpBackground = SKSpriteNode(imageNamed: "popUpBackgroundImage")
+        popUpBackground = SKSpriteNode(imageNamed: "popUpBackgroundImage 1")
         popUpBackground.size = popUpSize
         popUpBackground.position = CGPoint(x: 0.5, y: 0.5)
         popUpBackground.name = "popUpBackground"

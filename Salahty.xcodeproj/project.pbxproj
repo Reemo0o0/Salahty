@@ -29,9 +29,22 @@
 		8BEC591D2CAC288800B2B318 /* SalahtyUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SalahtyUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		E1A3257C2CB4200B006BD305 /* Exceptions for "Salahty" folder in "Salahty" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 8BEC58F92CAC288700B2B318 /* Salahty */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		8BEC58FC2CAC288700B2B318 /* Salahty */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				E1A3257C2CB4200B006BD305 /* Exceptions for "Salahty" folder in "Salahty" target */,
+			);
 			path = Salahty;
 			sourceTree = "<group>";
 		};
@@ -395,8 +408,9 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = ZTZQZMKD44;
+				DEVELOPMENT_TEAM = AY49G28558;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Salahty/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -422,8 +436,9 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = ZTZQZMKD44;
+				DEVELOPMENT_TEAM = AY49G28558;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Salahty/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
