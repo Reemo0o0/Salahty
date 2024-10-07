@@ -21,6 +21,10 @@ class GameScene: SKScene {
     var catNode: SKSpriteNode!
     var messageLabel: SKLabelNode!
     
+    var currentLevel = 1 // المستوى الحالي، يبدأ من صلاة الفجر
+    var finalLevelCompleted = false // متغير لمعرفة ما إذا تم إنهاء جميع الصلوات
+    var completedPrayers = Set<String>() // لتخزين الصلوات المكتملة
+    
     // متغيرات لتخزين الرسالة والصوت لكل صلاة
     var currentPrayerMessage: String = ""
     var currentPrayerSound: String = ""
@@ -34,27 +38,30 @@ class GameScene: SKScene {
         maghribButton = childNode(withName: "maghribButton") as? SKSpriteNode
         ishaButton = childNode(withName: "ishaButton") as? SKSpriteNode
         
-        // إضافة الأنيميشن الافتراضي للقطة
-        addStaticCatAnimation()
+        // إظهار زر الفجر فقط عند بدء اللعبة
+        dhuhrButton.isHidden = true
+        asrButton.isHidden = true
+        maghribButton.isHidden = true
+        ishaButton.isHidden = true
+
+        addStaticCatAnimation() // إضافة أنيميشن القطة الافتراضي
     }
     
     // دالة لإضافة أنيميشن افتراضي للقطة
     func addStaticCatAnimation() {
         if catNode == nil {
             catNode = SKSpriteNode(imageNamed: "StaticCat1")
-            catNode.position = CGPoint(x: -117.282, y: -328.055) // استخدام الموقع الذي ذكرته
-            catNode.size = CGSize(width: 53.056, height: 63.466) // استخدام الحجم الذي ذكرته
+            catNode.position = CGPoint(x: -117.282, y: -328.055)
+            catNode.size = CGSize(width: 53.056, height: 63.466)
             catNode.zPosition = 20
             addChild(catNode)
         }
 
-        // تشغيل أنيميشن ثابت افتراضي (الصورة الثابتة هي أنيميشن)
+        // تشغيل أنيميشن ثابت افتراضي
         let catTexture1 = SKTexture(imageNamed: "StaticCat1")
         let catTexture2 = SKTexture(imageNamed: "StaticCat2")
         let staticAnimation = SKAction.animate(with: [catTexture1, catTexture2], timePerFrame: 0.5)
         let repeatStaticAnimation = SKAction.repeatForever(staticAnimation)
-
-        // تشغيل الأنيميشن بشكل مستمر
         catNode.run(repeatStaticAnimation, withKey: "staticAnimation")
     }
     
@@ -86,80 +93,102 @@ class GameScene: SKScene {
                 currentPrayer = "isha"
             }
             
-            // إذا تم الضغط على أي من أزرار الصلاة، أظهر نافذة البوب أب
-            if touchedNode == fajrButton || touchedNode == dhuhrButton || touchedNode == asrButton || touchedNode == maghribButton || touchedNode == ishaButton {
+            // إذا تم الضغط على أي زر صلاة ولم تكتمل الصلاة سابقًا
+            if (touchedNode == fajrButton || touchedNode == dhuhrButton || touchedNode == asrButton || touchedNode == maghribButton || touchedNode == ishaButton) && !completedPrayers.contains(currentPrayer) {
                 showPopUp(prayerMessage: currentPrayerMessage)
-                
-                // تشغيل الصوت المحدد للصلاة
                 playSound(named: currentPrayerSound)
             }
+
+            // التعامل مع الضغط على زر "نعم"
             else if touchedNode == yesButton {
-                // عند الضغط على "نعم"
                 hidePopUp()
-                displayMessage("أحسنت! بارك الله فيك.", position: CGPoint(x: 42, y: -350.018)) // تحديد مكان النص
-                
-                // تشغيل الصوت بناءً على الصلاة
+                displayMessage("أحسنت! بارك الله فيك.", position: CGPoint(x: 42, y: -350.018))
+
+                // إضافة الصلاة المكتملة
+                completedPrayers.insert(currentPrayer)
+
+                // إذا كانت صلاة العشاء، أظهر صوت خاص
                 if currentPrayer == "isha" {
-                    playSound(named: "YouAreSpecial") // صوت خاص لصلاة العشاء
+                    playSound(named: "YouAreSpecial")
                 } else {
-                    playSound(named: "welldone") // الصوت العام لباقي الصلوات
+                    playSound(named: "welldone")
                 }
-                
-                animateYesCat(W: 53.056, H: 63.466, X: -117.282, Y: -328.055) // تشغيل أنيميشن زر "نعم"
+
+                animateYesCat(W: 53.056, H: 63.466, X: -117.282, Y: -328.055)
+                showNextPrayer() // الانتقال إلى الصلاة التالية
             }
+
+            // التعامل مع الضغط على زر "لا"
             else if touchedNode == noButton {
-                // عند الضغط على "لا"
                 hidePopUp()
-                displayMessage("اذهب للصلاة، نحن بانتظارك.", position: CGPoint(x: 42, y: -350.018)) // تحديد مكان النص
+                displayMessage("اذهب للصلاة، نحن بانتظارك.", position: CGPoint(x: 42, y: -350.018))
                 playSound(named: "BABY")
-                animateNoCat(W: 53.056, H: 63.466, X: -117.282, Y: -328.055) // تشغيل أنيميشن زر "لا"
+                animateNoCat(W: 53.056, H: 63.466, X: -117.282, Y: -328.055)
+
+                // ملاحظة: لا يتم تغيير الليفل هنا، يبقى في نفس الصلاة
             }
+        }
+    }
+    
+    // دالة لإظهار المستوى (الصلاة) التالية
+    func showNextPrayer() {
+        if currentPrayer == "fajr" {
+            dhuhrButton.isHidden = false
+        } else if currentPrayer == "dhuhr" {
+            asrButton.isHidden = false
+        } else if currentPrayer == "asr" {
+            maghribButton.isHidden = false
+        } else if currentPrayer == "maghrib" {
+            ishaButton.isHidden = false
+        } else if currentPrayer == "isha" {
+            finalLevelCompleted = true
+            displayMessage("كل الصلوات اكتملت! أحسنت العمل!", position: CGPoint(x: 0, y: 0))
+            playSound(named: "allPrayersCompletedSound")
         }
     }
     
     // دالة لإظهار نافذة البوب أب مع رسالة مخصصة
     func showPopUp(prayerMessage: String) {
         // إنشاء خلفية دارك بحجم وموقع محددين
-        dark = SKSpriteNode(color: UIColor.black.withAlphaComponent(0.4), size: CGSize(width: size.width, height: size.height)) // تحديد لون وخلفية مظلمة شفافة
+        dark = SKSpriteNode(color: UIColor.black.withAlphaComponent(0.4), size: CGSize(width: size.width, height: size.height))
         dark.position = CGPoint(x: 0.416, y: -0.12)
         dark.name = "dark"
         dark.zPosition = 5
         addChild(dark)
         
         // إنشاء خلفية البوب أب بحجم وموقع محددين
-        let popUpSize = CGSize(width: 303, height: 302) // حدد الحجم المناسب للخلفية
+        let popUpSize = CGSize(width: 303, height: 302)
         popUpBackground = SKSpriteNode(imageNamed: "popUpBackgroundImage")
         popUpBackground.size = popUpSize
-        popUpBackground.position = CGPoint(x: 0.5, y: 0.5) // حدد الموقع المناسب للخلفية
+        popUpBackground.position = CGPoint(x: 0.5, y: 0.5)
         popUpBackground.name = "popUpBackground"
         popUpBackground.zPosition = 10
         addChild(popUpBackground)
         
         // إنشاء زر "نعم" بحجم وموقع محددين داخل خلفية البوب أب
-        let yesButtonSize = CGSize(width: 119.345, height: 123.876) // حدد الحجم المناسب لزر "نعم"
+        let yesButtonSize = CGSize(width: 119.345, height: 123.876)
         yesButton = SKSpriteNode(imageNamed: "yesButtonImage")
         yesButton.size = yesButtonSize
-        yesButton.position = CGPoint(x: 80.685, y: -79.998) // حدد الموقع المناسب لزر "نعم" بالنسبة للخلفية
+        yesButton.position = CGPoint(x: 80.685, y: -79.998)
         yesButton.name = "yesButton"
         yesButton.zPosition = 11
         addChild(yesButton)
         
         // إنشاء زر "لا" بحجم وموقع محددين داخل خلفية البوب أب
-        let noButtonSize = CGSize(width: 119.345, height: 123.876) // حدد الحجم المناسب لزر "لا"
+        let noButtonSize = CGSize(width: 119.345, height: 123.876)
         noButton = SKSpriteNode(imageNamed: "noButtonImage")
         noButton.size = noButtonSize
-        noButton.position = CGPoint(x: -77.068, y: -80) // حدد الموقع المناسب لزر "لا" بالنسبة للخلفية
+        noButton.position = CGPoint(x: -77.068, y: -80)
         noButton.name = "noButton"
         noButton.zPosition = 11
         addChild(noButton)
         
         // عرض الرسالة المخصصة داخل نافذة البوب أب
-        messageLabel?.removeFromParent() // إزالة الرسالة السابقة إذا وجدت
-        
+        messageLabel?.removeFromParent()
         messageLabel = SKLabelNode(text: prayerMessage)
         messageLabel.fontSize = 24
         messageLabel.fontColor = .white
-        messageLabel.position = CGPoint(x: -16, y: -10) // موقع النص داخل البوب أب
+        messageLabel.position = CGPoint(x: -16, y: -10)
         messageLabel.zPosition = 11
         popUpBackground.addChild(messageLabel)
     }
@@ -174,8 +203,7 @@ class GameScene: SKScene {
     
     // دالة لعرض رسالة في مكان معين بعد إغلاق البوب أب
     func displayMessage(_ message: String, position: CGPoint) {
-        messageLabel?.removeFromParent() // إزالة الرسالة السابقة إذا وجدت
-        
+        messageLabel?.removeFromParent()
         messageLabel = SKLabelNode(text: message)
         messageLabel.fontSize = 20
         messageLabel.fontColor = .white
@@ -190,9 +218,8 @@ class GameScene: SKScene {
         run(playSound)
     }
     
-    // دالة لتشغيل الأنيميشن الخاص بزر "نعم" مع تحديد العرض (W)، الارتفاع (H)، والموقع (X, Y)
+    // دالة لتشغيل الأنيميشن الخاص بزر "نعم"
     func animateYesCat(W: CGFloat, H: CGFloat, X: CGFloat, Y: CGFloat) {
-        // إيقاف الأنيميشن الافتراضي أولاً
         catNode?.removeAction(forKey: "staticAnimation")
         
         let catTexture1 = SKTexture(imageNamed: "HappyAnimation1")
@@ -200,18 +227,16 @@ class GameScene: SKScene {
         let animation = SKAction.animate(with: [catTexture1, catTexture2], timePerFrame: 0.5)
         let repeatAnimation = SKAction.repeat(animation, count: 3)
         
-        catNode?.position = CGPoint(x: X, y: Y) // تعيين موقع الأنيميشن
-        catNode?.size = CGSize(width: W, height: H) // تعيين العرض والارتفاع
+        catNode?.position = CGPoint(x: X, y: Y)
+        catNode?.size = CGSize(width: W, height: H)
         
         catNode?.run(repeatAnimation) {
-            // بعد انتهاء الأنيميشن، إعادة تشغيل الأنيميشن الافتراضي
             self.addStaticCatAnimation()
         }
     }
     
-    // دالة لتشغيل الأنيميشن الخاص بزر "لا" مع تحديد العرض (W)، الارتفاع (H)، والموقع (X, Y)
+    // دالة لتشغيل الأنيميشن الخاص بزر "لا"
     func animateNoCat(W: CGFloat, H: CGFloat, X: CGFloat, Y: CGFloat) {
-        // إيقاف الأنيميشن الافتراضي أولاً
         catNode?.removeAction(forKey: "staticAnimation")
         
         let catTexture1 = SKTexture(imageNamed: "AngryAnimation1")
@@ -219,11 +244,10 @@ class GameScene: SKScene {
         let animation = SKAction.animate(with: [catTexture1, catTexture2], timePerFrame: 0.5)
         let repeatAnimation = SKAction.repeat(animation, count: 3)
         
-        catNode?.position = CGPoint(x: X, y: Y) // تعيين موقع الأنيميشن
-        catNode?.size = CGSize(width: W, height: H) // تعيين العرض والارتفاع
+        catNode?.position = CGPoint(x: X, y: Y)
+        catNode?.size = CGSize(width: W, height: H)
         
         catNode?.run(repeatAnimation) {
-            // بعد انتهاء الأنيميشن، إعادة تشغيل الأنيميشن الافتراضي
             self.addStaticCatAnimation()
         }
     }
