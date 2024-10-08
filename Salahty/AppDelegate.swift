@@ -25,7 +25,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if let soundURL = Bundle.main.url(forResource: "BackgrpundOst", withExtension: "mp3") {
             do {
                 audioPlayer = try AVAudioPlayer(contentsOf: soundURL)
-                audioPlayer?.volume = 0.3 // ضبط مستوى الصوت (0.5 يعني نصف الصوت)
+                audioPlayer?.volume = 0.2 // ضبط مستوى الصوت (0.5 يعني نصف الصوت)
                 audioPlayer?.play() // تشغيل الصوت
             } catch {
                 print("حدث خطأ في تشغيل الصوت")

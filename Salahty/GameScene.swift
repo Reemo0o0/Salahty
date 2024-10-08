@@ -51,20 +51,39 @@ class GameScene: SKScene {
 
         addStaticCatAnimation() // إضافة أنيميشن القطة الافتراضي
         
-        textField = UITextField(frame: CGRect(x: 70 , y: 75 , width: 300, height: 50))
-        textField.borderStyle = .none // إزالة الإطار
-        textField.placeholder = "ادخل هديتك هنا"
-        textField.textAlignment = .center
-        textField.backgroundColor = UIColor.clear // جعل الخلفية شفافة
-        textField.textColor = .white // تغيير لون النص ليتناسب مع التصميم
-        textField.returnKeyType = .done
-
-        // إضافة نوع الخط المخصص "bitsy-ar-standardline" والحجم المناسب
-        textField.font = UIFont(name: "bitsy-ar-standardline", size: 18) // اختيار الخط "bitsy-ar-standardline" وحجم الخط 18
-
-        
-               self.view?.addSubview(textField) // إضافة UITextField إلى المشهد
-        
+        // القيم المثالية لـ iPhone 16 Max
+          let idealXForiPhone16Max: CGFloat = 70
+          let idealYForiPhone16Max: CGFloat = 76
+          let idealWidth: CGFloat = 300
+          let idealHeight: CGFloat = 50
+          
+          // حجم شاشة iPhone 16 Max
+          let iPhone16MaxWidth: CGFloat = 430
+          let iPhone16MaxHeight: CGFloat = 932
+          
+          // الحصول على حجم المشهد الحالي
+          let currentSceneWidth = self.size.width
+          let currentSceneHeight = self.size.height
+          
+          // حساب النسب بناءً على iPhone 16 Max
+          let xRatio = idealXForiPhone16Max / iPhone16MaxWidth
+          let yRatio = idealYForiPhone16Max / iPhone16MaxHeight
+          
+          // حساب الموضع الجديد بناءً على حجم الشاشة الحالية
+          let newXPosition = currentSceneWidth * xRatio
+          let newYPosition = currentSceneHeight * yRatio
+          
+          // استخدام الموضع الجديد
+          textField = UITextField(frame: CGRect(x: newXPosition, y: newYPosition, width: idealWidth, height: idealHeight))
+          textField.borderStyle = .none // إزالة الإطار
+          textField.placeholder = "ادخل هديتك هنا"
+          textField.textAlignment = .center
+          textField.backgroundColor = UIColor.clear // جعل الخلفية شفافة
+          textField.textColor = .white // تغيير لون النص ليتناسب مع التصميم
+          textField.returnKeyType = .done
+          textField.font = UIFont(name: "bitsy-ar-standardline", size: 18) // اختيار الخط
+          
+          self.view?.addSubview(textField)
         // عرض رسالة ترحيب وصوت عند بدء التطبيق
          showWelcomeMessage()
      }
