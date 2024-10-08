@@ -21,6 +21,11 @@ class GameScene: SKScene {
     var catNode: SKSpriteNode!
     var messageLabel: SKLabelNode!
     
+    var welcomeLabel: SKLabelNode! // لتعريف رسالة الترحيب
+    
+    var textField: UITextField! // إضافة UITextField لإدخال النص
+    
+    
     var currentLevel = 1 // المستوى الحالي، يبدأ من صلاة الفجر
     var finalLevelCompleted = false // متغير لمعرفة ما إذا تم إنهاء جميع الصلوات
     var completedPrayers = Set<String>() // لتخزين الصلوات المكتملة
@@ -45,15 +50,63 @@ class GameScene: SKScene {
         ishaButton.isHidden = true
 
         addStaticCatAnimation() // إضافة أنيميشن القطة الافتراضي
-    }
-    
+        
+        textField = UITextField(frame: CGRect(x: 70 , y: 75 , width: 300, height: 50))
+        textField.borderStyle = .none // إزالة الإطار
+        textField.placeholder = "ادخل هديتك هنا"
+        textField.textAlignment = .center
+        textField.backgroundColor = UIColor.clear // جعل الخلفية شفافة
+        textField.textColor = .white // تغيير لون النص ليتناسب مع التصميم
+        textField.returnKeyType = .done
+
+        // إضافة نوع الخط المخصص "bitsy-ar-standardline" والحجم المناسب
+        textField.font = UIFont(name: "bitsy-ar-standardline", size: 18) // اختيار الخط "bitsy-ar-standardline" وحجم الخط 18
+
+        
+               self.view?.addSubview(textField) // إضافة UITextField إلى المشهد
+        
+        // عرض رسالة ترحيب وصوت عند بدء التطبيق
+         showWelcomeMessage()
+     }
+     
+     // دالة لعرض رسالة ترحيب وصوت
+     func showWelcomeMessage() {
+         // إضافة الرسالة في وسط الشاشة
+         welcomeLabel = SKLabelNode(text: "مرحبا!")
+         welcomeLabel.fontSize = 24
+         welcomeLabel.fontColor = .white
+         welcomeLabel.fontName = "bitsy-ar-standardline"
+         welcomeLabel.position = CGPoint(x: 42, y: -350.018) // في وسط الشاشة
+         welcomeLabel.zPosition = 100
+         addChild(welcomeLabel)
+         
+         disableButtonsInteraction()
+
+         
+         // تأخير لمدة ثانية واحدة قبل تشغيل الصوت الترحيبي
+            let wait = SKAction.wait(forDuration: 1.0)
+            let playWelcomeSound = SKAction.run { [weak self] in
+                self?.playSound(named: "hello") // تأكد من وجود ملف الصوت "welcomeSound"
+            }
+         // إزالة الرسالة بعد تشغيل الصوت والترحيب (مثلاً بعد 3 ثواني)
+           let waitBeforeRemoving = SKAction.wait(forDuration: 21) // تأخير لإعطاء المستخدم وقتًا لرؤية الرسالة
+           let removeWelcomeMessage = SKAction.run { [weak self] in
+               self?.welcomeLabel.removeFromParent() // إزالة رسالة الترحيب
+               self?.enableButtonsInteraction() // إعادة تمكين الأزرار
+           }
+           
+           // تنفيذ الانتظار، تشغيل الصوت، ثم إزالة الرسالة
+         run(SKAction.sequence([wait, playWelcomeSound, waitBeforeRemoving, removeWelcomeMessage]))
+
+     }
+
     // دالة لإضافة أنيميشن افتراضي للقطة
     func addStaticCatAnimation() {
         if catNode == nil {
             catNode = SKSpriteNode(imageNamed: "StaticCat1")
-            catNode.position = CGPoint(x: -117.282, y: -328.055)
+            catNode.position = CGPoint(x: -111.282, y: -330.055)
             catNode.size = CGSize(width: 53.056, height: 63.466)
-            catNode.zPosition = 20
+            catNode.zPosition = 3
             addChild(catNode)
         }
 
@@ -69,6 +122,11 @@ class GameScene: SKScene {
         for touch in touches {
             let location = touch.location(in: self)
             let touchedNode = atPoint(location)
+            
+            // التأكد من أن الزر ليس معطلًا (بسبب الترحيب)
+                 if touchedNode.name == "disabled" {
+                     return // تجاهل الضغط إذا كان الزر معطلًا
+                 }
             
             // التحقق من الصلاة التي تم الضغط عليها وتحديد الرسالة والصوت
             if touchedNode == fajrButton {
@@ -128,8 +186,15 @@ class GameScene: SKScene {
                 // ملاحظة: لا يتم تغيير الليفل هنا، يبقى في نفس الصلاة
             }
         }
+        
+        // إخفاء UITextField عند الضغط على الشاشة
+                   self.view?.endEditing(true) // إخفاء لوحة المفاتيح
     }
-    
+    // دالة لإزالة UITextField عند الانتقال من المشهد
+     override func willMove(from view: SKView) {
+         textField.removeFromSuperview()
+     }
+     
     // دالة لإظهار المستوى (الصلاة) التالية
     func showNextPrayer() {
         if currentPrayer == "fajr" {
@@ -189,7 +254,7 @@ class GameScene: SKScene {
         messageLabel.fontName = "bitsy-ar-standardline" // تعيين الخط المخصص
         messageLabel.fontSize = 16
         messageLabel.fontColor = .white
-        messageLabel.position = CGPoint(x: -4, y: -8)
+        messageLabel.position = CGPoint(x: -3, y: -8)
         messageLabel.zPosition = 11
         popUpBackground.addChild(messageLabel)
     }
@@ -207,7 +272,7 @@ class GameScene: SKScene {
         messageLabel?.removeFromParent()
         messageLabel = SKLabelNode(text: message)
         messageLabel.fontName = "bitsy-ar-standardline" // تعيين الخط المخصص
-        messageLabel.fontSize = 15
+        messageLabel.fontSize = 24
         messageLabel.fontColor = .white
         messageLabel.position = position
         messageLabel.zPosition = 20
@@ -229,7 +294,7 @@ class GameScene: SKScene {
         let animation = SKAction.animate(with: [catTexture1, catTexture2], timePerFrame: 0.5)
         let repeatAnimation = SKAction.repeat(animation, count: 3)
         
-        catNode?.position = CGPoint(x: X, y: Y)
+        catNode?.position = CGPoint(x: -111.282, y: -330.055)
         catNode?.size = CGSize(width: W, height: H)
         
         catNode?.run(repeatAnimation) {
@@ -246,11 +311,29 @@ class GameScene: SKScene {
         let animation = SKAction.animate(with: [catTexture1, catTexture2], timePerFrame: 0.5)
         let repeatAnimation = SKAction.repeat(animation, count: 3)
         
-        catNode?.position = CGPoint(x: X, y: Y)
+        catNode?.position = CGPoint(x: -111.282, y: -330.055)
         catNode?.size = CGSize(width: W, height: H)
         
         catNode?.run(repeatAnimation) {
             self.addStaticCatAnimation()
         }
+    }
+    
+    // دالة لتعطيل تفاعل الأزرار
+    func disableButtonsInteraction() {
+        fajrButton.name = "disabled"
+        dhuhrButton.name = "disabled"
+        asrButton.name = "disabled"
+        maghribButton.name = "disabled"
+        ishaButton.name = "disabled"
+    }
+
+    // دالة لإعادة تمكين تفاعل الأزرار
+    func enableButtonsInteraction() {
+        fajrButton.name = "fajrButton"
+        dhuhrButton.name = "dhuhrButton"
+        asrButton.name = "asrButton"
+        maghribButton.name = "maghribButton"
+        ishaButton.name = "ishaButton"
     }
 }
